@@ -22,3 +22,6 @@ def index(request):
 
 def thanks(request):
     return render(request, 'thanks.html')
+
+def confirmation(request, userid):
+    return render(request, 'confirmation.html')
