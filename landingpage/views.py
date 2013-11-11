@@ -1,31 +1,54 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponseRedirect
 from django.core import mail
 from django.template.loader import get_template
 from django.template import Context
-from django.shortcuts import get_object_or_404
+from django.contrib import auth
+from django.contrib.auth import authenticate
 
-from forms import RegisterForm
+from forms import RegisterForm, LoginForm
 from models import UserData
 
 connection = mail.get_connection()
 
 
+def register(regform, data):
+    data = {}
+    regcd = regform.cleaned_data
+    obj, created = UserData.objects.get_or_create(
+        username=regcd['username'], email=regcd['email'], is_active=False)
+    if created:
+        mail_activation(obj, regcd)
+        return HttpResponseRedirect('/thanks/')
+    else:
+        data['msg'] = 1
+    return data
+
+
+def login(logform):
+    logcd = logform.cleaned_data
+    return authenticate(userID=logcd['userID'], password=logcd['password'])
+
+def form_handle(request):
+    regform = RegisterForm(request.POST)
+    logform = LoginForm(request.POST)
+    if regform.is_valid():
+        data.update(register(regform, data))
+    elif logform.is_valid():
+        user = login(logform)
+        if user is not None and user.is_active:
+            auth.login(request, user)
+
 def index(request):
     data = {}
-    if request.method == 'POST':
-        form = RegisterForm(request.POST)
-        if form.is_valid():
-            cd = form.cleaned_data
-            obj, created = UserData.objects.get_or_create(
-                username=cd['username'], email=cd['email'], is_active=False)
-            if created:
-                mail_activation(obj, cd)
-                return HttpResponseRedirect('/thanks/')
-            else:
-                data['msg'] = 1
+    if not request.user.is_authenticated():
+        if request.method == 'POST':
+            form_handle(request)
+        else:
+            data['regform'] = RegisterForm()
+            data['logform'] = LoginForm()
     else:
-        data['form'] = RegisterForm()
+        data['user'] = request.user.username
     return render(request, 'index.html', data)
 
 
@@ -42,6 +65,7 @@ def mail_activation(obj, cd):
     email.attach_alternative(html_content, "text/html")
     connection.send_messages([email])
     connection.close()
+
 
 def mail_login(obj, password):
     connection.open()
@@ -71,4 +95,3 @@ def confirmation(request, userid):
     mail_login(obj, obj.generate_auth())
     obj.save()
     return render(request, 'confirmation.html')
-

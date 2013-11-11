@@ -15,15 +15,25 @@
 </head>
 <body>
     <h1>Hello!</h1>
-    {% if form %}
+    {% if regform %}
     <form action="" method="post">
-        {{form.as_p}}
+        {{regform.as_p}}
+        {% csrf_token %}
+        <input type="submit" value="Submit">
+    </form>
+    {% endif %}
+    {% if logform %}
+    <form action="" method="post">
+        {{logform.as_p}}
         {% csrf_token %}
         <input type="submit" value="Submit">
     </form>
     {% endif %}
     {% if msg %}
       <p>User with this username exist</p>
+    {% endif %}
+    {% if user %}
+      <p>{{user}}</p>
     {% endif %}
 </body>
 </html>

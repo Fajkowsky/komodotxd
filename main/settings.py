@@ -96,3 +96,8 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = 'fiverr.komodotxd@gmail.com'
 EMAIL_HOST_PASSWORD = 'fiver.komodotxd'
 EMAIL_USE_TLS = True
+
+# AUTH BACKENDS
+AUTHENTICATION_BACKENDS = (
+    'landingpage.backends.LoginBackend',
+)

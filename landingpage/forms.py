@@ -8,4 +8,4 @@ class RegisterForm(forms.Form):
 
 class LoginForm(forms.Form):
     userID = forms.CharField()
-    password = forms.EmailField()
+    password = forms.CharField()
