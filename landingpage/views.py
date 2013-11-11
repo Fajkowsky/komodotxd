@@ -3,6 +3,7 @@ from django.http import HttpResponseRedirect
 from django.core import mail
 from django.template.loader import get_template
 from django.template import Context
+from django.shortcuts import get_object_or_404
 
 from forms import RegisterForm
 from models import UserData
@@ -19,7 +20,7 @@ def index(request):
             obj, created = UserData.objects.get_or_create(
                 username=cd['username'], email=cd['email'], is_active=False)
             if created:
-                mail_activation(obj, cd)
+                # mail_activation(obj, cd)
                 return HttpResponseRedirect('/thanks/')
             else:
                 data['msg'] = 1
@@ -52,7 +53,6 @@ def error(request):
 
 
 def confirmation(request, userid):
-    if UserData.objects.filter(confirmation=userid).update(is_active=True):
-        return render(request, 'confirmation.html')
-    else:
-        return HttpResponseRedirect('/404/')
+    obj = get_object_or_404(UserData, confirmation=userid, is_active=False)
+    return render(request, 'confirmation.html')
+
