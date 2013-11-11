@@ -1,0 +1,7 @@
+/venv
+*.pyc
+*.pyo
+*.sublime-*
+local_settings.py
+main.db
+*.egg-info
