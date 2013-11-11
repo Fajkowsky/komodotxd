@@ -14,7 +14,7 @@
   <![endif]-->
 </head>
 <body>
-    <h1>Hello!</h1>
+    <h1>Hello! {{user}}</h1>
     {% if regform %}
     <form action="" method="post">
         {{regform.as_p}}
@@ -32,8 +32,11 @@
     {% if msg %}
       <p>User with this username exist</p>
     {% endif %}
-    {% if user %}
-      <p>{{user}}</p>
+    {% if logged %}
+    <form action="account/" method="post">
+      {% csrf_token %}
+      <input type="submit" value="Account">
+    </form>
     {% endif %}
 </body>
 </html>

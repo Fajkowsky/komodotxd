@@ -4,7 +4,7 @@ from django.core import mail
 from django.template.loader import get_template
 from django.template import Context
 from django.contrib import auth
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, login
 
 from forms import RegisterForm, LoginForm
 from models import UserData
@@ -25,31 +25,40 @@ def register(regform, data):
     return data
 
 
-def login(logform):
+def loging(logform):
     logcd = logform.cleaned_data
     return authenticate(userID=logcd['userID'], password=logcd['password'])
 
 def form_handle(request):
+    data = {}
     regform = RegisterForm(request.POST)
     logform = LoginForm(request.POST)
     if regform.is_valid():
-        data.update(register(regform, data))
+        data = register(regform, data)
     elif logform.is_valid():
-        user = login(logform)
+        user = loging(logform)
+        print "user:", user
         if user is not None and user.is_active:
-            auth.login(request, user)
+            print login(request, user)
+            data['logged'] = 1
+        else:
+            data['logged'] = 0
+    return data
 
 def index(request):
     data = {}
-    if not request.user.is_authenticated():
-        if request.method == 'POST':
-            form_handle(request)
-        else:
-            data['regform'] = RegisterForm()
-            data['logform'] = LoginForm()
+    if request.method == 'POST':
+        data = form_handle(request)
     else:
-        data['user'] = request.user.username
+        data['regform'] = RegisterForm()
+        data['logform'] = LoginForm()
     return render(request, 'index.html', data)
+
+def account(request):
+    data = {}
+    data['user'] = request.user.username
+    print data['user']
+    return render(request, 'account.html', data)
 
 
 def mail_activation(obj, cd):
