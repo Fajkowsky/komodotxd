@@ -20,7 +20,7 @@ def index(request):
             obj, created = UserData.objects.get_or_create(
                 username=cd['username'], email=cd['email'], is_active=False)
             if created:
-                # mail_activation(obj, cd)
+                mail_activation(obj, cd)
                 return HttpResponseRedirect('/thanks/')
             else:
                 data['msg'] = 1
@@ -43,6 +43,20 @@ def mail_activation(obj, cd):
     connection.send_messages([email])
     connection.close()
 
+def mail_login(obj, password):
+    connection.open()
+    html_content = get_template('email/login.html').render(
+        Context({'login': obj.userID, 'password': password}))
+    email = mail.EmailMultiAlternatives(
+        'LogIn',
+        html_content,
+        '',
+        [obj.email],
+    )
+    email.attach_alternative(html_content, "text/html")
+    connection.send_messages([email])
+    connection.close()
+
 
 def thanks(request):
     return render(request, 'thanks.html')
@@ -54,5 +68,7 @@ def error(request):
 
 def confirmation(request, userid):
     obj = get_object_or_404(UserData, confirmation=userid, is_active=False)
+    mail_login(obj, obj.generate_auth())
+    obj.save()
     return render(request, 'confirmation.html')
 
