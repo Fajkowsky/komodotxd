@@ -1,10 +1,11 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponseRedirect
 from django.core import mail
 from django.template.loader import get_template
 from django.template import Context
 from django.contrib import auth
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
+from django.core.urlresolvers import reverse
 
 from forms import RegisterForm, LoginForm
 from models import UserData
@@ -19,9 +20,11 @@ def index(request, data={}):
 
         if regform.is_valid():
             register(regform, data)
+            return HttpResponseRedirect('/thanks/')
 
         elif logform.is_valid():
             user = loging(logform, request)
+            return HttpResponseRedirect('/account/')
 
     def register(regform, data={}):
         regcd = regform.cleaned_data
@@ -30,7 +33,6 @@ def index(request, data={}):
 
         if created:
             mail_activation(obj, regcd)
-            return HttpResponseRedirect('/thanks/')
 
     def loging(logform, request):
         logcd = logform.cleaned_data
@@ -40,9 +42,9 @@ def index(request, data={}):
             login(request, user)
     # --------------------------------------------------
     if request.method == 'POST':
-        data = form_handle(request)
+        return form_handle(request)
 
-    else:
+    elif not request.user.is_authenticated():
         data['regform'] = RegisterForm()
         data['logform'] = LoginForm()
 
@@ -50,8 +52,13 @@ def index(request, data={}):
 
 
 def account(request, data={}):
-    data['user'] = request.user.username
+    data['user'] = request.user
     return render(request, 'account.html', data)
+
+
+def logouting(request):
+    logout(request)
+    return HttpResponseRedirect('/')
 
 
 def mail_activation(obj, cd):

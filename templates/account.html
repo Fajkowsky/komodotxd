@@ -14,7 +14,14 @@
   <![endif]-->
 </head>
 <body>
+    {% if user.is_authenticated %}
     <h1>Hello! {{user}}</h1>
-    
+    <form action="/account/logout/" method="post">
+      {% csrf_token %}
+      <input type="submit" value="Logout">
+    </form>
+    {% else %}
+      <p>Please LogIn</p>
+    {% endif %}
 </body>
 </html>
