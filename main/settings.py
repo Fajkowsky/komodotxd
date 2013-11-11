@@ -88,3 +88,10 @@ TEMPLATE_DIRS = (
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'static/'),
 )
+
+# EMAIL SETTINGS
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'fiverr.komodotxd@gmail.com'
+EMAIL_HOST_PASSWORD = 'fiver.komodotxd'
+EMAIL_USE_TLS = True
