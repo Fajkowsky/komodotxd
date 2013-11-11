@@ -12,52 +12,45 @@ from models import UserData
 connection = mail.get_connection()
 
 
-def register(regform, data):
-    data = {}
-    regcd = regform.cleaned_data
-    obj, created = UserData.objects.get_or_create(
-        username=regcd['username'], email=regcd['email'], is_active=False)
-    if created:
-        mail_activation(obj, regcd)
-        return HttpResponseRedirect('/thanks/')
-    else:
-        data['msg'] = 1
-    return data
+def index(request, data={}):
+    def form_handle(request, data={}):
+        regform = RegisterForm(request.POST)
+        logform = LoginForm(request.POST)
 
+        if regform.is_valid():
+            register(regform, data)
 
-def loging(logform):
-    logcd = logform.cleaned_data
-    return authenticate(userID=logcd['userID'], password=logcd['password'])
+        elif logform.is_valid():
+            user = loging(logform, request)
 
-def form_handle(request):
-    data = {}
-    regform = RegisterForm(request.POST)
-    logform = LoginForm(request.POST)
-    if regform.is_valid():
-        data = register(regform, data)
-    elif logform.is_valid():
-        user = loging(logform)
-        print "user:", user
+    def register(regform, data={}):
+        regcd = regform.cleaned_data
+        obj, created = UserData.objects.get_or_create(
+            username=regcd['username'], email=regcd['email'], is_active=False)
+
+        if created:
+            mail_activation(obj, regcd)
+            return HttpResponseRedirect('/thanks/')
+
+    def loging(logform, request):
+        logcd = logform.cleaned_data
+        user = authenticate(userID=logcd['userID'], password=logcd['password'])
+
         if user is not None and user.is_active:
-            print login(request, user)
-            data['logged'] = 1
-        else:
-            data['logged'] = 0
-    return data
-
-def index(request):
-    data = {}
+            login(request, user)
+    # --------------------------------------------------
     if request.method == 'POST':
         data = form_handle(request)
+
     else:
         data['regform'] = RegisterForm()
         data['logform'] = LoginForm()
+
     return render(request, 'index.html', data)
 
-def account(request):
-    data = {}
+
+def account(request, data={}):
     data['user'] = request.user.username
-    print data['user']
     return render(request, 'account.html', data)
 
 
