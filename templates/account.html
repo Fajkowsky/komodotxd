@@ -1,27 +1,13 @@
-<!doctype html>
+{% extends "base.html" %}
 
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-
-  <title>The HTML5 Basic Template</title>
-  <meta name="description" content="The HTML5 Herald">
-  <meta name="author" content="SitePoint">
-
-
-  <!--[if lt IE 9]>
-  <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-  <![endif]-->
-</head>
-<body>
-    {% if user.is_authenticated %}
-    <h1>Hello! {{user}}</h1>
-    <form action="/account/logout/" method="post">
-      {% csrf_token %}
-      <input type="submit" value="Logout">
-    </form>
-    {% else %}
-      <p>Please LogIn</p>
-    {% endif %}
-</body>
-</html>
+{% block content %}
+  {% if user.is_authenticated %}
+  <h1>Hello! {{user}}</h1>
+  <form action="/account/logout/" method="post">
+    {% csrf_token %}
+    <input type="submit" value="Logout">
+  </form>
+  {% else %}
+    <p>Please LogIn</p>
+  {% endif %}
+{% endblock %}
