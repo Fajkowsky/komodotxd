@@ -1,7 +1,19 @@
 from django.shortcuts import render
+from django.http import HttpResponseRedirect
 
 from forms import RegisterForm
 
+
 def index(request):
-    form = RegisterForm()
-    return render(request, 'index.html', {'form': form})
+    data = {}
+    if request.method == 'POST':
+        form = RegisterForm(request.POST)
+        if form.is_valid():
+            cd = form.cleaned_data
+            return HttpResponseRedirect('/thanks/')
+    else:
+        data['form'] = RegisterForm()
+    return render(request, 'index.html', data)
+
+def thanks(request):
+    return render(request, 'thanks.html')
