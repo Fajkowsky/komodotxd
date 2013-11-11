@@ -7,7 +7,11 @@
     {% csrf_token %}
     <input type="submit" value="Logout">
   </form>
+  <form action="/account/modify/" method="post">
+    {% csrf_token %}
+    <input type="submit" value="Modify">
+  </form>
   {% else %}
-    <p>Please LogIn</p>
+    <p>Please login</p>
   {% endif %}
 {% endblock %}

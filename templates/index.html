@@ -1,7 +1,9 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <h1>Hello! {{user}}</h1>
+  {% if user.is_authenticated %}
+  <h1>Hello! {{user.username}}</h1>
+  {% endif %}
   {% if regform %}
   <form action="" method="post">
       {{regform.as_p}}

@@ -40,13 +40,20 @@ def index(request, data={}):
 
         if user is not None and user.is_active:
             login(request, user)
+
+    def create_forms(data={}):
+        data['regform'] = RegisterForm()
+        data['logform'] = LoginForm()
+        return data
     # --------------------------------------------------
     if request.method == 'POST':
         return form_handle(request)
 
     elif not request.user.is_authenticated():
-        data['regform'] = RegisterForm()
-        data['logform'] = LoginForm()
+        data = create_forms()
+
+    else:
+        data['user'] = request.user
 
     return render(request, 'index.html', data)
 
@@ -54,6 +61,11 @@ def index(request, data={}):
 def account(request, data={}):
     data['user'] = request.user
     return render(request, 'account.html', data)
+
+
+def modify(request, data={}):
+    data['user'] = request.user
+    return render(request, 'modify.html', data)
 
 
 def logouting(request):
@@ -66,11 +78,7 @@ def mail_activation(obj, cd):
     html_content = get_template('email/confirmation.html').render(
         Context({'code': obj.confirmation}))
     email = mail.EmailMultiAlternatives(
-        'Activation link',
-        html_content,
-        '',
-        [cd['email']],
-    )
+        'Activation link', html_content, '', [cd['email']], )
     email.attach_alternative(html_content, "text/html")
     connection.send_messages([email])
     connection.close()
@@ -81,11 +89,7 @@ def mail_login(obj, password):
     html_content = get_template('email/login.html').render(
         Context({'login': obj.userID, 'password': password}))
     email = mail.EmailMultiAlternatives(
-        'LogIn',
-        html_content,
-        '',
-        [obj.email],
-    )
+        'LogIn', html_content, '', [obj.email], )
     email.attach_alternative(html_content, "text/html")
     connection.send_messages([email])
     connection.close()
