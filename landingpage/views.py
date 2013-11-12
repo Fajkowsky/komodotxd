@@ -13,6 +13,7 @@ from models import UserData
 
 connection = mail.get_connection()
 
+
 def index(request, data={}):
     def handleforms(request):
         logging = loging(request)
@@ -63,25 +64,29 @@ def index(request, data={}):
     return render(request, 'index.html', {'regform': regform, 'logform': logform})
 
 
-@login_required
 def account(request, data={}):
-    data['user'] = request.user
-    return render(request, 'account.html', data)
-
-
-@login_required
-def modify(request, data={}):
-    if request.method == 'POST':
-        form = ModifyForm(request.POST)
-        if form.is_valid():
-            logedUser = request.user
-            cd = form.cleaned_data
-            UserData.objects.filter(
-                pk=logedUser.id).update(country=cd['country'])
-            return HttpResponseRedirect('/thanks/')
+    if request.user.is_authenticated():
+        data['user'] = request.user
+        return render(request, 'account.html', data)
     else:
-        form = ModifyForm()
-    return render(request, 'modify.html', {'form': form})
+        raise Http404
+
+
+def modify(request, data={}):
+    if request.user.is_authenticated():
+        if request.method == 'POST':
+            form = ModifyForm(request.POST)
+            if form.is_valid():
+                logedUser = request.user
+                cd = form.cleaned_data
+                UserData.objects.filter(
+                    pk=logedUser.id).update(country=cd['country'])
+                return HttpResponseRedirect('/thanks/')
+        else:
+            form = ModifyForm()
+        return render(request, 'modify.html', {'form': form})
+    else:
+        raise Http404
 
 
 def logouting(request):

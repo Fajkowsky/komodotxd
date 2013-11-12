@@ -3,11 +3,11 @@
 {% block content %}
   {% if user.is_authenticated %}
   <h1>Hello! {{user}}</h1>
-  <form action="/account/logout/" method="post">
+  <form action="/account/logout/" method="get">
     {% csrf_token %}
     <input type="submit" value="Logout">
   </form>
-  <form action="/account/modify/" method="post">
+  <form action="/account/modify/" method="get">
     {% csrf_token %}
     <input type="submit" value="Modify">
   </form>
