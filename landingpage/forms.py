@@ -4,13 +4,13 @@ from landingpage.models import UserData
 
 
 class RegisterForm(forms.Form):
-    username = forms.CharField()
-    email = forms.EmailField()
+    username = forms.CharField(required=True)
+    email = forms.EmailField(required=True)
 
 
 class LoginForm(forms.Form):
-    userID = forms.CharField()
-    password = forms.CharField()
+    userID = forms.CharField(required=True)
+    password = forms.CharField(required=True)
 
 
 class ModifyForm(forms.Form):

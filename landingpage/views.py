@@ -56,16 +56,13 @@ def index(request, data={}):
         data['logform'] = LoginForm()
         return data
     # --------------------------------------------------
-    if not request.user.is_authenticated():
-        data.update(create_forms())
-        data['user'] = '-'
-
     if request.method == 'POST':
         forms_response = handleforms(request)
         if forms_response:
+            data['user'] = request.user
             return forms_response
 
-    data.update(create_forms())
+    data.update(create_forms(data))
 
     return render(request, 'index.html', data)
 
