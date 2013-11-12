@@ -3,29 +3,35 @@
 {% block content %}
   {% if user.is_authenticated %}
   <h1>Hello! {{user.username}}</h1>
+  <form action="account/" method="post">
+      {% csrf_token %}
+      <input type="submit" value="Account">
+  </form>
   {% else %}
     {% if regform %}
-    <form action="" method="post">
-        {{regform.as_p}}
-        {% csrf_token %}
-        <input type="submit" value="Submit">
-    </form>
+      {% if regform.errors %}
+          <p style="color: red;">
+              Please correct the error{{ form.errors|pluralize }} below.
+          </p>
+      {% endif %}
+      <form action="" method="post">
+          {{regform.as_p}}
+          {% csrf_token %}
+          <input type="submit" value="Submit">
+      </form>
     {% endif %}
     {% if logform %}
+      {% if logform.errors %}
+            <p style="color: red;">
+                Please correct the error{{ form.errors|pluralize }} below.
+            </p>
+      {% endif %}
     <form action="" method="post">
         {{logform.as_p}}
         {% csrf_token %}
         <input type="submit" value="Submit">
     </form>
     {% endif %}
-    {% if msg %}
-      <p>User with this username exist</p>
-    {% endif %}
-    {% if logged %}
-    <form action="account/" method="post">
-      {% csrf_token %}
-      <input type="submit" value="Account">
-    </form>
-    {% endif %}
+    
   {% endif %}
 {% endblock %}

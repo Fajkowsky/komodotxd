@@ -13,7 +13,6 @@ from models import UserData
 
 connection = mail.get_connection()
 
-
 def index(request, data={}):
     def handleforms(request):
         logging = loging(request)
@@ -50,11 +49,6 @@ def index(request, data={}):
                 login(request, user)
 
             return HttpResponseRedirect('/account/')
-
-    def create_forms(data={}):
-        data['regform'] = RegisterForm()
-        data['logform'] = LoginForm()
-        return data
     # --------------------------------------------------
     if request.method == 'POST':
         forms_response = handleforms(request)
@@ -62,9 +56,11 @@ def index(request, data={}):
             data['user'] = request.user
             return forms_response
 
-    data.update(create_forms(data))
+    else:
+        regform = RegisterForm()
+        logform = LoginForm()
 
-    return render(request, 'index.html', data)
+    return render(request, 'index.html', {'regform': regform, 'logform': logform})
 
 
 @login_required
@@ -75,20 +71,17 @@ def account(request, data={}):
 
 @login_required
 def modify(request, data={}):
-    def prepare_data():
-        data['user'] = request.user
-        data['form'] = ModifyForm()
-        return data
-    # --------------------------------------------------
     if request.method == 'POST':
         form = ModifyForm(request.POST)
-        logedUser = request.user
         if form.is_valid():
+            logedUser = request.user
             cd = form.cleaned_data
             UserData.objects.filter(
                 pk=logedUser.id).update(country=cd['country'])
-    data.update(prepare_data())
-    return render(request, 'modify.html', data)
+            return HttpResponseRedirect('/thanks/')
+    else:
+        form = ModifyForm()
+    return render(request, 'modify.html', {'form': form})
 
 
 def logouting(request):

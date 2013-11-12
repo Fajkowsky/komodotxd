@@ -3,6 +3,11 @@
 {% block content %}
   {% if user.is_authenticated %}
     {{user.username}} - {{user.email}} - {{user.userID}} - {{user.password}}
+    {% if form.errors %}
+        <p style="color: red;">
+            Please correct the error{{ form.errors|pluralize }} below.
+        </p>
+    {% endif %}
     <form action="" method="post">
         {{form.as_p}}
         {% csrf_token %}
