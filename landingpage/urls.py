@@ -1,4 +1,6 @@
 from django.conf.urls import patterns, include, url
+from django.conf import settings
+from django.conf.urls.static import static
 
 
 urlpatterns = patterns('',
@@ -9,4 +11,4 @@ urlpatterns = patterns('',
     url(r'^account/$', 'landingpage.views.account', name='account'),
     url(r'^account/logout/$', 'landingpage.views.logouting', name='logouting'),
     url(r'^account/modify/$', 'landingpage.views.modify', name='modify'),
-)
+) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

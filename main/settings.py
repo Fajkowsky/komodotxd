@@ -101,3 +101,7 @@ EMAIL_USE_TLS = True
 AUTHENTICATION_BACKENDS = (
     'landingpage.backends.LoginBackend',
 )
+
+# MEDIA
+MEDIA_ROOT = os.path.join(BASE_DIR, "media/")
+MEDIA_URL = '/media/'

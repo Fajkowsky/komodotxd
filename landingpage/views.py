@@ -77,10 +77,12 @@ def modify(request, data={}):
     if request.user.is_authenticated():
         logedUser = request.user
         if request.method == 'POST':
-            form = ModifyForm(request.POST)
+            form = ModifyForm(request.POST, request.FILES)
             if form.is_valid():
-                cd = form.cleaned_data
-                UserData.objects.filter(pk=logedUser.id).update(**cd)
+                user = UserData.objects.get(pk=logedUser.id)
+                for attr, value in form.cleaned_data.iteritems(): 
+                    setattr(user, attr, value)
+                user.save()
                 return HttpResponseRedirect('/thanks/')
         else:
             user = model_to_dict(UserData.objects.get(pk=logedUser.id))
