@@ -14,4 +14,13 @@ class LoginForm(forms.Form):
 
 
 class ModifyForm(forms.Form):
-    country = forms.CharField(required=True)
+    username = forms.CharField(required=False)
+    email = forms.CharField(required=False)
+    country = forms.CharField(required=False)
+    address1 = forms.CharField(required=False)
+    address2 = forms.CharField(required=False)
+    telephone = forms.CharField(required=False)
+    postal_code = forms.CharField(required=False)
+    city = forms.CharField(required=False)
+    doc_id = forms.ImageField(required=False)
+    doc_vrfy = forms.ImageField(required=False)

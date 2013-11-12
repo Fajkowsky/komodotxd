@@ -7,6 +7,7 @@ from django.contrib import auth
 from django.contrib.auth import authenticate, login, logout
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
+from django.forms.models import model_to_dict
 
 from forms import RegisterForm, LoginForm, ModifyForm
 from models import UserData
@@ -74,16 +75,16 @@ def account(request, data={}):
 
 def modify(request, data={}):
     if request.user.is_authenticated():
+        logedUser = request.user
         if request.method == 'POST':
             form = ModifyForm(request.POST)
             if form.is_valid():
-                logedUser = request.user
                 cd = form.cleaned_data
-                UserData.objects.filter(
-                    pk=logedUser.id).update(country=cd['country'])
+                UserData.objects.filter(pk=logedUser.id).update(**cd)
                 return HttpResponseRedirect('/thanks/')
         else:
-            form = ModifyForm()
+            user = model_to_dict(UserData.objects.get(pk=logedUser.id))
+            form = ModifyForm(initial=user)
         return render(request, 'modify.html', {'form': form})
     else:
         raise Http404

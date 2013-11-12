@@ -16,8 +16,8 @@ class UserData(User):
     postal_code = models.CharField(max_length=10)
     city = models.CharField(max_length=20)
 
-    doc_id = models.ImageField(upload_to="images/")
-    doc_vrfy = models.ImageField(upload_to="images/")
+    doc_id = models.ImageField(upload_to="images/", null=True)
+    doc_vrfy = models.ImageField(upload_to="images/", null=True)
 
     objects = UserManager()
 
