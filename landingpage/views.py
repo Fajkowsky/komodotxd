@@ -6,65 +6,91 @@ from django.template import Context
 from django.contrib import auth
 from django.contrib.auth import authenticate, login, logout
 from django.core.urlresolvers import reverse
+from django.contrib.auth.decorators import login_required
 
-from forms import RegisterForm, LoginForm
+from forms import RegisterForm, LoginForm, ModifyForm
 from models import UserData
 
 connection = mail.get_connection()
 
 
 def index(request, data={}):
-    def form_handle(request, data={}):
+    def handleforms(request):
+        logging = loging(request)
+        registering = register(request)
+        if logging:
+            return logging
+        elif registering:
+            return registering
+        else:
+            return False
+
+    def register(request):
         regform = RegisterForm(request.POST)
-        logform = LoginForm(request.POST)
 
         if regform.is_valid():
-            register(regform, data)
+            regcd = regform.cleaned_data
+            obj, created = UserData.objects.get_or_create(
+                username=regcd['username'], email=regcd['email'], is_active=False)
+
+            if created:
+                mail_activation(obj, regcd)
+
             return HttpResponseRedirect('/thanks/')
 
-        elif logform.is_valid():
-            user = loging(logform, request)
+    def loging(request):
+        logform = LoginForm(request.POST)
+
+        if logform.is_valid():
+            logcd = logform.cleaned_data
+            user = authenticate(
+                userID=logcd['userID'], password=logcd['password'])
+
+            if user is not None and user.is_active:
+                login(request, user)
+
             return HttpResponseRedirect('/account/')
-
-    def register(regform, data={}):
-        regcd = regform.cleaned_data
-        obj, created = UserData.objects.get_or_create(
-            username=regcd['username'], email=regcd['email'], is_active=False)
-
-        if created:
-            mail_activation(obj, regcd)
-
-    def loging(logform, request):
-        logcd = logform.cleaned_data
-        user = authenticate(userID=logcd['userID'], password=logcd['password'])
-
-        if user is not None and user.is_active:
-            login(request, user)
 
     def create_forms(data={}):
         data['regform'] = RegisterForm()
         data['logform'] = LoginForm()
         return data
     # --------------------------------------------------
+    if not request.user.is_authenticated():
+        data.update(create_forms())
+        data['user'] = '-'
+
     if request.method == 'POST':
-        return form_handle(request)
+        forms_response = handleforms(request)
+        if forms_response:
+            return forms_response
 
-    elif not request.user.is_authenticated():
-        data = create_forms()
-
-    else:
-        data['user'] = request.user
+    data.update(create_forms())
 
     return render(request, 'index.html', data)
 
 
+@login_required
 def account(request, data={}):
     data['user'] = request.user
     return render(request, 'account.html', data)
 
 
+@login_required
 def modify(request, data={}):
-    data['user'] = request.user
+    def prepare_data():
+        data['user'] = request.user
+        data['form'] = ModifyForm()
+        return data
+    # --------------------------------------------------
+    if request.method == 'POST':
+        form = ModifyForm(request.POST)
+        logedUser = request.user
+        if form.is_valid():
+            cd = form.cleaned_data
+            UserData.objects.filter(
+                pk=logedUser.id).update(country=cd['country'])
+    data.update(prepare_data())
     return render(request, 'modify.html', data)
 
 
