@@ -3,14 +3,8 @@
 {% block content %}
   {% if user.is_authenticated %}
   <h1>Hello! {{user}}</h1>
-  <form action="/account/logout/" method="get">
-    {% csrf_token %}
-    <input type="submit" value="Logout">
-  </form>
-  <form action="/account/modify/" method="get">
-    {% csrf_token %}
-    <input type="submit" value="Modify">
-  </form>
+  <a href="{% url 'landingpage.views.logouting' %}"><button type="button">Logout</button></a>
+  <a href="{% url 'landingpage.views.modify' %}"><button type="button">Modify</button></a>
   {% else %}
     <p>Please login</p>
   {% endif %}

@@ -3,10 +3,7 @@
 {% block content %}
   {% if user.is_authenticated %}
   <h1>Hello! {{user.username}}</h1>
-  <form action="account/" method="post">
-      {% csrf_token %}
-      <input type="submit" value="Account">
-  </form>
+  <a href="{% url 'landingpage.views.account' %}"><button type="button">Account</button></a>
   {% else %}
     {% if regform %}
       {% if regform.errors %}
