@@ -16,9 +16,9 @@ connection = mail.get_connection()
 
 
 def index(request, data={}):
-    def handleforms(request):
-        logging = loging(request)
-        registering = register(request)
+    def handleforms(request, regform, logform):
+        logging = loging(request, logform)
+        registering = register(request, regform)
         if logging:
             return logging
         elif registering:
@@ -26,9 +26,7 @@ def index(request, data={}):
         else:
             return False
 
-    def register(request):
-        regform = RegisterForm(request.POST)
-
+    def register(request, regform):
         if regform.is_valid():
             regcd = regform.cleaned_data
             obj, created = UserData.objects.get_or_create(
@@ -39,9 +37,7 @@ def index(request, data={}):
 
             return HttpResponseRedirect('/thanks/')
 
-    def loging(request):
-        logform = LoginForm(request.POST)
-
+    def loging(request, logform):
         if logform.is_valid():
             logcd = logform.cleaned_data
             user = authenticate(
@@ -53,7 +49,9 @@ def index(request, data={}):
             return HttpResponseRedirect('/account/')
     # --------------------------------------------------
     if request.method == 'POST':
-        forms_response = handleforms(request)
+        regform = RegisterForm(request.POST)
+        logform = LoginForm(request.POST)
+        forms_response = handleforms(request, regform, logform)
         if forms_response:
             data['user'] = request.user
             return forms_response
@@ -70,7 +68,7 @@ def account(request, data={}):
         data['user'] = request.user
         return render(request, 'account.html', data)
     else:
-        raise Http404
+        return HttpResponseRedirect('/404/')
 
 
 def modify(request, data={}):
@@ -80,7 +78,7 @@ def modify(request, data={}):
             form = ModifyForm(request.POST, request.FILES)
             if form.is_valid():
                 user = UserData.objects.get(pk=logedUser.id)
-                for attr, value in form.cleaned_data.iteritems(): 
+                for attr, value in form.cleaned_data.iteritems():
                     setattr(user, attr, value)
                 user.save()
                 return HttpResponseRedirect('/thanks/')
@@ -89,7 +87,7 @@ def modify(request, data={}):
             form = ModifyForm(initial=user)
         return render(request, 'modify.html', {'form': form})
     else:
-        raise Http404
+        return HttpResponseRedirect('/404/')
 
 
 def logouting(request):

@@ -2,7 +2,7 @@
 
 {% block content %}
   {% if user.is_authenticated %}
-    {{user.username}} - {{user.email}} - {{user.userID}} - {{user.password}}
+    {{user.username}} - {{user.email}} - {{user.userID}} - {{user.password}} - <img src="{{MEDIA_URL}}{{user.doc_id}}" width="250px">
     {% if form.errors %}
         <p style="color: red;">
             Please correct the error{{ form.errors|pluralize }} below.

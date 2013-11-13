@@ -22,5 +22,5 @@ class ModifyForm(forms.Form):
     telephone = forms.CharField(required=False)
     postal_code = forms.CharField(required=False)
     city = forms.CharField(required=False)
-    doc_id = forms.ImageField(required=False)
-    doc_vrfy = forms.ImageField(required=False)
+    doc_id = forms.ImageField(required=False, widget=forms.FileInput)
+    doc_vrfy = forms.ImageField(required=False, widget=forms.FileInput)
