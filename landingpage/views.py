@@ -79,7 +79,8 @@ def modify(request, data={}):
             if form.is_valid():
                 user = UserData.objects.get(pk=logedUser.id)
                 for attr, value in form.cleaned_data.iteritems():
-                    setattr(user, attr, value)
+                    if value:
+                        setattr(user, attr, value)
                 user.save()
                 return HttpResponseRedirect(reverse('thanks'))
         else:
