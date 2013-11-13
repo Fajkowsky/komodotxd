@@ -3,8 +3,8 @@
 {% block content %}
   {% if user.is_authenticated %}
   <h1>Hello! {{user}}</h1>
-  <a href="{% url 'landingpage.views.logouting' %}"><button type="button">Logout</button></a>
-  <a href="{% url 'landingpage.views.modify' %}"><button type="button">Modify</button></a>
+  <a href="{% url 'logouting' %}"><button type="button">Logout</button></a>
+  <a href="{% url 'modify' %}"><button type="button">Modify</button></a>
   {% else %}
     <p>Please login</p>
   {% endif %}

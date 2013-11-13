@@ -35,7 +35,7 @@ def index(request, data={}):
             if created:
                 mail_activation(obj, regcd)
 
-            return HttpResponseRedirect('/thanks/')
+            return HttpResponseRedirect(reverse('thanks'))
 
     def loging(request, logform):
         if logform.is_valid():
@@ -46,7 +46,7 @@ def index(request, data={}):
             if user is not None and user.is_active:
                 login(request, user)
 
-            return HttpResponseRedirect('/account/')
+            return HttpResponseRedirect(reverse('account'))
     # --------------------------------------------------
     if request.method == 'POST':
         regform = RegisterForm(request.POST)
@@ -68,7 +68,7 @@ def account(request, data={}):
         data['user'] = request.user
         return render(request, 'account.html', data)
     else:
-        return HttpResponseRedirect('/404/')
+        return HttpResponseRedirect(reverse('error'))
 
 
 def modify(request, data={}):
@@ -81,18 +81,18 @@ def modify(request, data={}):
                 for attr, value in form.cleaned_data.iteritems():
                     setattr(user, attr, value)
                 user.save()
-                return HttpResponseRedirect('/thanks/')
+                return HttpResponseRedirect(reverse('thanks'))
         else:
             user = model_to_dict(UserData.objects.get(pk=logedUser.id))
             form = ModifyForm(initial=user)
         return render(request, 'modify.html', {'form': form})
     else:
-        return HttpResponseRedirect('/404/')
+        return HttpResponseRedirect(reverse('error'))
 
 
 def logouting(request):
     logout(request)
-    return HttpResponseRedirect('/')
+    return HttpResponseRedirect(reverse('index'))
 
 
 def mail_activation(obj, cd):
