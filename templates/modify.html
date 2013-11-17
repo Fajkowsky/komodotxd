@@ -2,17 +2,59 @@
 
 {% block content %}
   {% if user.is_authenticated %}
-    {{user.username}} - {{user.email}} - {{user.userID}} - {{user.password}} - <img src="{{MEDIA_URL}}{{user.doc_id}}" width="250px">
     {% if form.errors %}
         <p style="color: red;">
             Please correct the error{{ form.errors|pluralize }} below.
         </p>
     {% endif %}
-    <form enctype="multipart/form-data" action="" method="post">
-        {{form.as_p}}
-        {% csrf_token %}
-      <input type="submit" value="Submit">
-    </form>
+    <div class="container">
+      <div class="row col-md-12">
+        <div class="row col-md-5 row col-sm-5 col-xs-10 col-md-offset-1 col-sm-offset-1 col-xs-offset-1 help-block">
+          <form action="" method="post" >
+            {% csrf_token %}
+              <p>
+                <label for="id_username">Username:</label> 
+                {{form.username}}
+              </p>
+              <p>
+                <label for="id_email">Email:</label> 
+                {{form.email}}
+              </p>
+              <p>
+                <label for="id_email">Country:</label> 
+                {{form.country}}
+              </p>
+              <p>
+                <label for="id_email">Address1:</label> 
+                {{form.address1}}
+              </p>
+              <p>
+                <label for="id_email">Address2:</label> 
+                {{form.address2}}
+              </p>
+              <p>
+                <label for="id_email">Telephone:</label> 
+                {{form.telephone}}
+              </p>
+              <p>
+                <label for="id_email">Postal code:</label> 
+                {{form.postal_code}}
+              </p>
+              <p>
+                <label for="id_email">City:</label> 
+                {{form.city}}
+              </p>
+              <p>
+                <label for="id_email">Doc id:</label> 
+                {{form.doc_id}}
+                <label for="id_email"> Doc vrfy:</label> 
+                {{form.doc_vrfy}}
+              </p>
+              <input type="submit" value="Submit" class="btn btn-primary">
+            </form>
+          </div>
+        </div>
+      </div> 
   {% else %}
     <p>Please login</p>
   {% endif %}

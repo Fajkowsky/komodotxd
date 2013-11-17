@@ -53,14 +53,13 @@ def index(request, data={}):
         logform = LoginForm(request.POST)
         forms_response = handleforms(request, regform, logform)
         if forms_response:
-            data['user'] = request.user
             return forms_response
 
     else:
         regform = RegisterForm()
         logform = LoginForm()
 
-    return render(request, 'index.html', {'regform': regform, 'logform': logform})
+    return render(request, 'index.html', {'regform': regform, 'logform': logform, 'user': request.user})
 
 
 def account(request, data={}):
@@ -93,7 +92,7 @@ def modify(request, data={}):
 
 def logouting(request):
     logout(request)
-    return HttpResponseRedirect(reverse('index'))
+    return redirect('index')
 
 
 def mail_activation(obj, cd):

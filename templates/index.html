@@ -1,34 +1,46 @@
 {% extends "base.html" %}
 
 {% block content %}
-  {% if user.is_authenticated %}
-  <h1>Hello! {{user.username}}</h1>
-  <a href="{% url 'account' %}"><button type="button">Account</button></a>
-  {% else %}
+  {% if not user.is_authenticated %}
+  <div class="container">
+    <div class="row col-md-12">
     {% if regform %}
-      {% if regform.errors %}
-          <p style="color: red;">
-              Please correct the error{{ form.errors|pluralize }} below.
-          </p>
-      {% endif %}
-      <form action="" method="post">
-          {{regform.as_p}}
-          {% csrf_token %}
-          <input type="submit" value="Submit">
+      <div class="row col-md-5 row col-sm-5 col-xs-10 col-md-offset-1 col-sm-offset-1 col-xs-offset-1 help-block">
+      <form action="" method="post" >
+        {% csrf_token %}
+        <p>
+          <label for="id_username">Username:</label> 
+          {{regform.username}}
+        </p>
+        <p>
+          <label for="id_email">Email:</label> 
+          {{regform.email}}
+        </p>
+        <input type="submit" value="Register" class="btn btn-info">
       </form>
+    </div>
     {% endif %}
     {% if logform %}
-      {% if logform.errors %}
-            <p style="color: red;">
-                Please correct the error{{ form.errors|pluralize }} below.
-            </p>
-      {% endif %}
-    <form action="" method="post">
-        {{logform.as_p}}
+    <div class="row col-md-5 col-sm-5 col-xs-10 col-md-offset-1 col-sm-offset-1 col-xs-offset-1 help-block">
+      <form action="" method="post">
         {% csrf_token %}
-        <input type="submit" value="Submit">
-    </form>
+        <p>
+          <label for="id_userID">Userid:</label> 
+          {{logform.userID}}
+        </p>
+        <p>
+          <label for="id_password">Password:</label>
+          {{logform.password}}
+        </p>
+        <input type="submit" value="LogIn" class="btn btn-primary">
+      </form>
+    </div>  
     {% endif %}
-    
+    </div>
+  </div>  
   {% endif %}
 {% endblock %}
+
+
+    
+    
