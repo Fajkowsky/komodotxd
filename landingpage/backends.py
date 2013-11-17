@@ -4,7 +4,7 @@ from django.contrib.auth.models import AnonymousUser
 
 from models import UserData
 
-
+# custom backend for email login purposes
 class LoginBackend:
 
     def authenticate(self, userID=None, password=None):

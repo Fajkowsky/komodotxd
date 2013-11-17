@@ -12,10 +12,12 @@ from django.forms.models import model_to_dict
 from forms import RegisterForm, LoginForm, ModifyForm
 from models import UserData
 
+#make mail connection
 connection = mail.get_connection()
 
 
 def index(request, data={}):
+    # function to handle two form on one page
     def handleforms(request, regform, logform):
         logging = loging(request, logform)
         registering = register(request, regform)
@@ -26,6 +28,7 @@ def index(request, data={}):
         else:
             return False
 
+    # validating register form
     def register(request, regform):
         if regform.is_valid():
             regcd = regform.cleaned_data
@@ -37,6 +40,7 @@ def index(request, data={}):
 
             return HttpResponseRedirect(reverse('thanks'))
 
+    # validating login form
     def loging(request, logform):
         if logform.is_valid():
             logcd = logform.cleaned_data
@@ -61,7 +65,7 @@ def index(request, data={}):
 
     return render(request, 'index.html', {'regform': regform, 'logform': logform, 'user': request.user})
 
-
+# handle account request page
 def account(request, data={}):
     if request.user.is_authenticated():
         data['user'] = request.user
@@ -69,7 +73,7 @@ def account(request, data={}):
     else:
         return HttpResponseRedirect(reverse('error'))
 
-
+# handle modify request page
 def modify(request, data={}):
     if request.user.is_authenticated():
         logedUser = request.user
@@ -89,12 +93,12 @@ def modify(request, data={}):
     else:
         return HttpResponseRedirect(reverse('error'))
 
-
+# handle logout from session
 def logouting(request):
     logout(request)
     return redirect('index')
 
-
+# send activation mail with link
 def mail_activation(obj, cd):
     connection.open()
     html_content = get_template('email/confirmation.html').render(
@@ -105,7 +109,7 @@ def mail_activation(obj, cd):
     connection.send_messages([email])
     connection.close()
 
-
+# send mail with userID and password
 def mail_login(obj, password):
     connection.open()
     html_content = get_template('email/login.html').render(
@@ -116,15 +120,15 @@ def mail_login(obj, password):
     connection.send_messages([email])
     connection.close()
 
-
+# handle tanks request page
 def thanks(request):
     return render(request, 'thanks.html')
 
-
+# handle error request page
 def error(request):
     return render(request, '404.html')
 
-
+# handle confirmation user request
 def confirmation(request, userid):
     obj = get_object_or_404(UserData, confirmation=userid, is_active=False)
     mail_login(obj, obj.generate_auth())

@@ -25,6 +25,7 @@ class UserData(User):
         self.confirmation = uuid.uuid4().hex
         super(UserData, self).save(*args, **kwargs)
 
+    # generating userID and password
     def generate_auth(self):
         if not self.is_active:
             self.userID = int(
